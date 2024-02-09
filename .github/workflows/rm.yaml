@@ -66,22 +66,21 @@ jobs:
     #   run: |
     #     echo "STACK_ID=$(oci resource-manager stack list --all --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} | jq '.data[] | select(."display-name"==env.STACK_NAME).id' -r)" >> $GITHUB_ENV
 
-    - name: Create Provider
-      if: ${{ env.SOURCE_PROVIDER_ID == '' }}
-      run: |
-        SOURCE_PROVIDER_ID=$(oci resource-manager configuration-source-provider create-github-access-token-provider \
-          --access-token ${{ secrets.GITHUB_ACCESS_TOKEN }} \
-          --api-endpoint https://github.com/ \
-          --display-name "GitHub" \
-          --compartment-id ${{ secrets.OCI_COMPARTMENT_OCID }} | jq '.data.id' -r)
-        echo "SOURCE_PROVIDER_ID=$SOURCE_PROVIDER_ID" >> $GITHUB_ENV
+    # - name: 'Create Provider'
+    #   if: ${{env.SOURCE_PROVIDER_ID == ''}}
+    #   run: |
+    #       echo "SOURCE_PROVIDER_ID=$(oci resource-manager configuration-source-provider create-github-access-token-provider \
+    #       --access-token ${{secrets.GITHUB_ACCESS_TOKEN}} \
+    #       --api-endpoint https://github.com/ \
+    #       --display-name "GitHub" \
+    #       --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} | jq '.data.id' -r)" >> $GITHUB_ENV
 
     - name: 'Create Stack'
       if: ${{env.STACK_ID == ''}}
       run: |
           echo "STACK_ID=$(oci resource-manager stack create-from-git-provider \
           --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} \
-          --config-source-configuration-source-provider-id $SOURCE_PROVIDER_ID \
+          --config-source-configuration-source-provider-id "ocid1.ormconfigsourceprovider.oc1.iad.amaaaaaawe6j4fqajjvtwhbcryjpvbdkglks4ggkzripamj76ywnouhmiewa" \
           --config-source-branch-name $BRANCH_NAME \
           --config-source-repository-url $REPO_URL \
           --display-name "$STACK_NAME" \
