@@ -15,7 +15,7 @@ jobs:
         BRANCH_NAME: "github-actions-resource-manager"
         REPO_URL: "https://github.com/recursivecodes/oci-resource-manager-demo"
         TF_VERSION: "0.13.x"
-        REGION: "us-phoenix-1"
+        REGION: "us-ashburn-1"
         BUCKET_NAME: "test_bucket"
     steps:
     - name: 'Checkout'
@@ -48,23 +48,23 @@ jobs:
         oci setup repair-file-permissions --file /home/runner/.oci/config
         oci setup repair-file-permissions --file /home/runner/.oci/key.pem 
 
-    - name: 'Check Provider'
-      run: |
-        echo "SOURCE_PROVIDER_ID=$(oci resource-manager configuration-source-provider list \
-          --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} | jq '.data.items[] | select(."display-name"==env.PROVIDER_NAME).id' -r)" >> $GITHUB_ENV
+    # - name: 'Check Provider'
+    #   run: |
+    #     echo "SOURCE_PROVIDER_ID=$(oci resource-manager configuration-source-provider list \
+    #       --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} | jq '.data.items[] | select(."display-name"==env.PROVIDER_NAME).id' -r)" >> $GITHUB_ENV
 
-    - name: 'Check Stack'
-      run: |
-        echo "STACK_ID=$(oci resource-manager stack list --all --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} | jq '.data[] | select(."display-name"==env.STACK_NAME).id' -r)" >> $GITHUB_ENV
+    # - name: 'Check Stack'
+    #   run: |
+    #     echo "STACK_ID=$(oci resource-manager stack list --all --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} | jq '.data[] | select(."display-name"==env.STACK_NAME).id' -r)" >> $GITHUB_ENV
 
-    - name: 'Check Provider'
-      run: |
-        echo "SOURCE_PROVIDER_ID=$(oci resource-manager configuration-source-provider list \
-          --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} | jq '.data.items[] | select(."display-name"==env.PROVIDER_NAME).id' -r)" >> $GITHUB_ENV
+    # - name: 'Check Provider'
+    #   run: |
+    #     echo "SOURCE_PROVIDER_ID=$(oci resource-manager configuration-source-provider list \
+    #       --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} | jq '.data.items[] | select(."display-name"==env.PROVIDER_NAME).id' -r)" >> $GITHUB_ENV
 
-    - name: 'Check Stack'
-      run: |
-        echo "STACK_ID=$(oci resource-manager stack list --all --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} | jq '.data[] | select(."display-name"==env.STACK_NAME).id' -r)" >> $GITHUB_ENV
+    # - name: 'Check Stack'
+    #   run: |
+    #     echo "STACK_ID=$(oci resource-manager stack list --all --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} | jq '.data[] | select(."display-name"==env.STACK_NAME).id' -r)" >> $GITHUB_ENV
 
     - name: 'Create Provider'
       if: ${{env.SOURCE_PROVIDER_ID == ''}}
@@ -72,8 +72,8 @@ jobs:
           echo "SOURCE_PROVIDER_ID=$(oci resource-manager configuration-source-provider create-github-access-token-provider \
           --access-token ${{secrets.GITHUB_ACCESS_TOKEN}} \
           --api-endpoint https://github.com/ \
-          --display-name $PROVIDER_NAME \
-          --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} | jq '.data.id' -r)" >> $GITHUB_ENV
+          --display-name "GitHub" \
+          --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}}
 
     - name: 'Create Stack'
       if: ${{env.STACK_ID == ''}}
