@@ -19,8 +19,8 @@ jobs:
         config-file: ${{ github.workspace }}/oci/config
         tenancy: ${{ secrets.OCI_TENANCY_OCID }}
         user: ${{ secrets.OCI_USER_OCID }}
-        fingerprint: ${{ secrets.OCI_API_KEY_FINGERPRINT }}
-        private-key: ${{ secrets.OCI_PRIVATE_KEY }}
+        fingerprint: ${{ secrets.OCI_FINGERPRINT }}
+        private-key: ${{ secrets.OCI_KEY_FILE }}
 
     - name: Deploy OCI Resource Manager Stack
       run: |
