@@ -40,6 +40,7 @@ jobs:
         ./install.sh --accept-all-defaults
         echo "/home/runner/bin" >> $GITHUB_PATH
         exec -l $SHELL
+        cat ~/.oci/config
 
     - name: 'Fix OCI Config File Permissions'
       run: |
