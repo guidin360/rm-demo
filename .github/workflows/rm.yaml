@@ -32,6 +32,8 @@ jobs:
         echo "tenancy=${{secrets.OCI_TENANCY_OCID}}" >> ~/.oci/config
         echo "key_file=~/.oci/key.pem" >> ~/.oci/config
         echo "${{secrets.OCI_KEY_FILE}}" >> ~/.oci/key.pem
+        cat ~/.oci/config
+        whoami
 
     - name: 'Install OCI CLI'
       run: |
@@ -40,7 +42,7 @@ jobs:
         ./install.sh --accept-all-defaults
         echo "/home/runner/bin" >> $GITHUB_PATH
         exec -l $SHELL
-        cat ~/.oci/config
+        
 
     - name: 'Fix OCI Config File Permissions'
       run: |
