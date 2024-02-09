@@ -51,7 +51,6 @@ jobs:
           --display-name rmgit 
           --terraform-version "1.0.x" 
           --variables "{\"compartment_ocid\": \"${{ steps.find-compartment-id.outputs.raw_output }}\"}"'
-          query: 'data.id'
           silent: false
       - name: List the display name and shape of the instances in my compartment
         run: |
