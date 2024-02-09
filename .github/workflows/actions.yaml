@@ -13,7 +13,7 @@ jobs:
         BRANCH_NAME: "github-actions-resource-manager"
         REPO_URL: "https://github.com/recursivecodes/oci-resource-manager-demo"
         TF_VERSION: "0.13.x"
-        REGION: "us-phoenix-1"
+        REGION: "us-ashburn-1"
         BUCKET_NAME: "test_bucket"
     steps:
     - name: 'Checkout'
@@ -30,7 +30,7 @@ jobs:
         echo "tenancy=${{secrets.OCI_TENANCY_OCID}}" >> ~/.oci/config
         echo "key_file=~/.oci/key.pem" >> ~/.oci/config
         echo "${{secrets.OCI_KEY_FILE}}" >> ~/.oci/key.pem
-        
+
     - name: 'Fix OCI Config File Permissions'
       run: |
         oci setup repair-file-permissions --file /home/runner/.oci/config
