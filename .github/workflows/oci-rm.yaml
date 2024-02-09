@@ -33,13 +33,13 @@ jobs:
       #     query: "data[?name=='gferreyr'].id"
       #     silent: false
 
-      - name: 'Create Provider'
-        uses: oracle-actions/run-oci-cli-command@v1.1.1
-        id: create-connection-git
-        with:
-          command: 'resource-manager configuration-source-provider create-github-access-token-provider --access-token ${{secrets.ACCESS_TOKEN_GITHUB}} --api-endpoint https://github.com/ --display-name workflow  --compartment-id  ${{secrets.OCI_COMPARTMENT_OCID}}'
-          # query: 'data.id'
-          silent: false
+      # - name: 'Create Provider'
+      #   uses: oracle-actions/run-oci-cli-command@v1.1.1
+      #   id: create-connection-git
+      #   with:
+      #     command: 'resource-manager configuration-source-provider create-github-access-token-provider --access-token ${{secrets.ACCESS_TOKEN_GITHUB}} --api-endpoint https://github.com/ --display-name workflow  --compartment-id  ${{secrets.OCI_COMPARTMENT_OCID}}'
+      #     # query: 'data.id'
+      #     silent: false
       - name: 'Create Stack'
         uses: oracle-actions/run-oci-cli-command@v1.1.1
         id: create-stack
