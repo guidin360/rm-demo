@@ -21,7 +21,4 @@ jobs:
         user: ${{ secrets.OCI_USER_OCID }}
         fingerprint: ${{ secrets.OCI_FINGERPRINT }}
         private-key: ${{ secrets.OCI_KEY_FILE }}
-
-    - name: Deploy OCI Resource Manager Stack
-      run: |
-        oci resource-manager stack create --compartment-id ${{ secrets.OCI_COMPARTMENT_OCID }} --stack-name MyStack --config-source ${{ github.workspace }}/path/to/stack.zip
+        command: oci resource-manager stack list --compartment-id ocid1.compartment.oc1..aaaaaaaaw5uvqadwjql5fakqovf6jlc7sb5yvdnvwuxr7xreliqow7lhe7na
