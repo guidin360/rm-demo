@@ -73,7 +73,7 @@ jobs:
           --access-token ${{secrets.GITHUB_ACCESS_TOKEN}} \
           --api-endpoint https://github.com/ \
           --display-name "GitHub" \
-          --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}}
+          --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}}"
 
     - name: 'Create Stack'
       if: ${{env.STACK_ID == ''}}
