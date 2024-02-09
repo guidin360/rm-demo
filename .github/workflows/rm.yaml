@@ -6,19 +6,51 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-resource-manager:
+    name: Build Resource Manager
     runs-on: ubuntu-latest
-
+    env:
+        STACK_NAME: "OCI Resource Manager Demo Stack"
+        PROVIDER_NAME: "GitHub Source Provider"
+        BRANCH_NAME: "github-actions-resource-manager"
+        REPO_URL: "https://github.com/recursivecodes/oci-resource-manager-demo"
+        TF_VERSION: "0.13.x"
+        REGION: "us-phoenix-1"
+        BUCKET_NAME: "test_bucket"
     steps:
-    - name: Checkout Repository
+    - name: 'Checkout'
       uses: actions/checkout@v2
 
-    - name: Set up Oracle Cloud CLI
-      uses: oracle-actions/run-oci-cli-command@v1.1.1
-      with:
-        config-file: ${{ github.workspace }}/oci/config
-        tenancy: ${{ secrets.OCI_TENANCY_OCID }}
-        user: ${{ secrets.OCI_USER_OCID }}
-        fingerprint: ${{ secrets.OCI_FINGERPRINT }}
-        private-key: ${{ secrets.OCI_KEY_FILE }}
-        command: oci resource-manager stack list --compartment-id ocid1.compartment.oc1..aaaaaaaaw5uvqadwjql5fakqovf6jlc7sb5yvdnvwuxr7xreliqow7lhe7na
+    - name: 'Write Config & Key Files'
+      run: |
+        mkdir ~/.oci
+        echo "[DEFAULT]" >> ~/.oci/config
+        echo "user=${{secrets.OCI_USER_OCID}}" >> ~/.oci/config
+        echo "fingerprint=${{secrets.OCI_FINGERPRINT}}" >> ~/.oci/config
+        echo "pass_phrase=${{secrets.OCI_PASSPHRASE}}" >> ~/.oci/config
+        echo "region=${{secrets.OCI_REGION}}" >> ~/.oci/config
+        echo "tenancy=${{secrets.OCI_TENANCY_OCID}}" >> ~/.oci/config
+        echo "key_file=~/.oci/key.pem" >> ~/.oci/config
+        echo "${{secrets.OCI_KEY_FILE}}" >> ~/.oci/key.pem
+
+    - name: 'Install OCI CLI'
+      run: |
+        curl -L -O https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh
+        chmod +x install.sh
+        ./install.sh --accept-all-defaults
+        echo "/home/runner/bin" >> $GITHUB_PATH
+        exec -l $SHELL
+
+    - name: 'Fix OCI Config File Permissions'
+      run: |
+        oci setup repair-file-permissions --file /home/runner/.oci/config
+        oci setup repair-file-permissions --file /home/runner/.oci/key.pem 
+
+    - name: 'Check Provider'
+      run: |
+        echo "SOURCE_PROVIDER_ID=$(oci resource-manager configuration-source-provider list \
+          --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} | jq '.data.items[] | select(."display-name"==env.PROVIDER_NAME).id' -r)" >> $GITHUB_ENV
+
+    - name: 'Check Stack'
+      run: |
+        echo "STACK_ID=$(oci resource-manager stack list --all --compartment-id ${{secrets.OCI_COMPARTMENT_OCID}} | jq '.data[] | select(."display-name"==env.STACK_NAME).id' -r)" >> $GITHUB_ENV
