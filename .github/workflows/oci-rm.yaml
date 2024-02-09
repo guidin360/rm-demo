@@ -1,0 +1,68 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  my-instances:
+    runs-on: ubuntu-latest
+    name: List the display name and shape of the instances in my compartment
+    env:
+      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
+      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+    steps:
+      - name: Retrieve the OCID of a named compartment in tenancy
+        uses: oracle-actions/run-oci-cli-command@v1.1.1
+        id: find-compartment-id
+        with:
+          command: 'iam compartment list --compartment-id-in-subtree=true --all'
+          query: "data[?name=='isturzu'].id"
+          silent: false
+
+      - name: Retrieve the display name and shape of the instances in my compartment
+        uses: oracle-actions/run-oci-cli-command@v1.1.1
+        id: find-instances
+        with:
+          command: 'compute instance list --compartment-id ${{ steps.find-compartment-id.outputs.raw_output }}'
+          query: 'data[*].{name: \"display-name\", shape: shape}'
+          silent: false
+
+      - name: 'Create Provider'
+        uses: oracle-actions/run-oci-cli-command@v1.1.1
+        id: create-connection-git
+        with:
+          command: 'resource-manager configuration-source-provider create-github-access-token-provider --access-token ${{secrets.ACCESS_TOKEN_GITHUB}} --api-endpoint https://github.com/ --display-name workflow  --compartment-id ${{ steps.find-compartment-id.outputs.raw_output }}'
+          # query: 'data.id'
+          silent: false
+      - name: 'Create Stack'
+        uses: oracle-actions/run-oci-cli-command@v1.1.1
+        id: create-stack
+        with:
+          command: 'resource-manager stack create-from-git-provider --compartment-id ${{ steps.find-compartment-id.outputs.raw_output }} 
+          --config-source-configuration-source-provider-id "ocid1.ormconfigsourceprovider.oc1.iad.amaaaaaawe6j4fqajjvtwhbcryjpvbdkglks4ggkzripamj76ywnouhmiewa"
+          --config-source-branch-name main 
+          --config-source-repository-url https://github.com/ionut-sturzu/oci_connectivity
+          --display-name rmgit 
+          --terraform-version "1.0.x" 
+          --variables "{\"compartment_ocid\": \"${{ steps.find-compartment-id.outputs.raw_output }}\"}"'
+          query: 'data.id'
+          silent: false
+      - name: List the display name and shape of the instances in my compartment
+        run: |
+          echo ${{ steps.find-instances.outputs.output }} | jq .
+          echo ${{ steps.create-connection-git.outputs.output }} | jq .
+          echo ${{ steps.create-stack.outputs.output }} | jq .
