@@ -6,7 +6,7 @@ on:
 jobs:
   build-stack:
     name: Build Stack
-    runs-on: self-hosted
+    runs-on: gitlab-runner-791425
     steps:
 
       - name: 'Checkout'
