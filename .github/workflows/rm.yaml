@@ -1,0 +1,27 @@
+name: OCI Resource Manager Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Oracle Cloud CLI
+      uses: oracle/setup-oci-cli@v2
+      with:
+        config-file: ${{ github.workspace }}/oci/config
+        tenancy: ${{ secrets.OCI_TENANCY_OCID }}
+        user: ${{ secrets.OCI_USER_OCID }}
+        fingerprint: ${{ secrets.OCI_API_KEY_FINGERPRINT }}
+        private-key: ${{ secrets.OCI_PRIVATE_KEY }}
+
+    - name: Deploy OCI Resource Manager Stack
+      run: |
+        oci resource-manager stack create --compartment-id ${{ secrets.OCI_COMPARTMENT_OCID }} --stack-name MyStack --config-source ${{ github.workspace }}/path/to/stack.zip
