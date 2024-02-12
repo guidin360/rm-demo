@@ -49,12 +49,13 @@ jobs:
       - name: 'Extract OCID from create stack output'
         id: stack-id
         run: echo "STACK_ID=$(echo ${{ steps.create-stack.outputs.output }} | tr -d '"')" >> $GITHUB_ENV
+     
       - name: 'Terraform Apply'
         uses: oracle-actions/run-oci-cli-command@v1.1.1
         id: terraform-apply
         with:
           command: 'resource-manager job create-apply-job --stack-id ${{ env.STACK_ID }}'
-          querry: 'data.id'
+          query: 'data.id'
           silent: false
 
       - name: Display outputs
