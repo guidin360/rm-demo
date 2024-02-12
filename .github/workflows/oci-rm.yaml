@@ -52,13 +52,13 @@ jobs:
           --terraform-version "1.0.x" 
           --variables "{\"assign_public_ip\": \"true\", \"compartment_ocid\": \"${{ steps.find-compartment-id.outputs.raw_output }}\", \"image_ocid\": \"ocid1.image.oc1.iad.aaaaaaaavbafqm6xn5bkhrqtohcdphv5b7c7wzile7w33cv4drdiittiivpa\", \"instance_availability_domain\": \"GqIF:US-ASHBURN-AD-1\", \"instance_display_name\": \"demo-schema\", \"instance_shape\": \"VM.Standard.E4.Flex\", \"instance_shape_config_memory_in_gbs\": \"8\", \"instance_shape_config_ocpus\": \"1\", \"public_key\": \"ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMPnQhx/Fy0Y5X66m8Q575f3ZKF+CedQ47FmWwRQZ9x6GqfSrNXy5MSuiVnoWz1gvnzNC+ysDj9JJ9kfmtlwFZI= noname\", \"subnet_id\": \"ocid1.subnet.oc1.iad.aaaaaaaaradq3yg4ye7ahu762smojhmjji7v7pogjao3rlsybw43yhuts4uq\", \"region\": \"us-ashburn-1\"}"'
           silent: false
+      - name: List the display name and shape of the instances in my compartment
+        run: |
+          echo ${{ steps.create-stack.outputs.output }} | jq .
+          echo ${{ steps.apply-stack.outputs.output }} | jq .    
       - name: 'Apply Stack'
         uses: oracle-actions/run-oci-cli-command@v1.1.1
         id: 'apply-stack'
         with:
-          command: 'resource-manager job create-apply-job --stack-id "${{ steps.create-stack.outputs.output | fromJSON | jq -r ".stack_ocid" }}"'
+          command: 'resource-manager job create-apply-job --stack-id "${{ steps.create-stack.outputs.stack_ocid }}"'
           silent: false    
-      - name: List the display name and shape of the instances in my compartment
-        run: |
-          echo ${{ steps.create-stack.outputs.output }} | jq .
-          echo ${{ steps.apply-stack.outputs.output }} | jq .
