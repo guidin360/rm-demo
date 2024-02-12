@@ -56,7 +56,7 @@ jobs:
         uses: oracle-actions/run-oci-cli-command@v1.1.1
         id: 'apply-stack'
         with:
-          command: 'resource-manager job apply --stack-id "${{ steps.create-stack.outputs.stack_ocid }}"'
+          command: 'resource-manager job create-apply-job --stack-id "${{ steps.create-stack.outputs.stack_ocid }}"'
           silent: false    
       - name: List the display name and shape of the instances in my compartment
         run: |
