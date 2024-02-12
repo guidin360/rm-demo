@@ -144,7 +144,7 @@ variables:
   public_key:
     title: SSH Public Key
     type: oci:core:ssh:publickey
-    required: true    
+    required: false    
 
 outputs:
 

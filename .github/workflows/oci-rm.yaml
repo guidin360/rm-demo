@@ -50,7 +50,7 @@ jobs:
           --config-source-repository-url https://github.com/guidin360/rm-demo
           --display-name rmgit 
           --terraform-version "1.0.x" 
-          --variables "{\"assign_public_ip\": \"true\", \"compartment_ocid\": \"${{ steps.find-compartment-id.outputs.raw_output }}\", \"image_ocid\": \"ocid1.image.oc1.iad.aaaaaaaavbafqm6xn5bkhrqtohcdphv5b7c7wzile7w33cv4drdiittiivpa\", \"instance_availability_domain\": \"GqIF:US-ASHBURN-AD-1\", \"instance_display_name\": \"demo-schema\", \"instance_shape\": \"VM.Standard.E4.Flex\", \"instance_shape_config_memory_in_gbs\": \"8\", \"instance_shape_config_ocpus\": \"1\", \"public_key\": \"fsdfasdasdfasdffasd\", \"subnet_id\": \"ocid1.subnet.oc1.iad.aaaaaaaaradq3yg4ye7ahu762smojhmjji7v7pogjao3rlsybw43yhuts4uq\", \"region\": \"us-ashburn-1\"}"'
+          --variables "{\"assign_public_ip\": \"true\", \"compartment_ocid\": \"${{ steps.find-compartment-id.outputs.raw_output }}\", \"image_ocid\": \"ocid1.image.oc1.iad.aaaaaaaavbafqm6xn5bkhrqtohcdphv5b7c7wzile7w33cv4drdiittiivpa\", \"instance_availability_domain\": \"GqIF:US-ASHBURN-AD-1\", \"instance_display_name\": \"demo-schema\", \"instance_shape\": \"VM.Standard.E4.Flex\", \"instance_shape_config_memory_in_gbs\": \"8\", \"instance_shape_config_ocpus\": \"1\", \"subnet_id\": \"ocid1.subnet.oc1.iad.aaaaaaaaradq3yg4ye7ahu762smojhmjji7v7pogjao3rlsybw43yhuts4uq\", \"region\": \"us-ashburn-1\"}"'
           silent: false
       - name: List the display name and shape of the instances in my compartment
         run: |
