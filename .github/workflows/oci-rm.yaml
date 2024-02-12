@@ -47,7 +47,7 @@ jobs:
           command: 'resource-manager stack create-from-git-provider --compartment-id "${{ steps.find-compartment-id.outputs.raw_output }}"
           --config-source-configuration-source-provider-id "ocid1.ormconfigsourceprovider.oc1.iad.amaaaaaawe6j4fqajjvtwhbcryjpvbdkglks4ggkzripamj76ywnouhmiewa"
           --config-source-branch-name main 
-          --config-source-repository-url https://github.com/ionut-sturzu/oci_connectivity
+          --config-source-repository-url https://github.com/guidin360/rm-demo
           --display-name rmgit 
           --terraform-version "1.0.x" 
           --variables "{\"compartment_ocid\": \"${{ steps.find-compartment-id.outputs.raw_output }}\"}"'
