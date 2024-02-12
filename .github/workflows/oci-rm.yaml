@@ -25,13 +25,13 @@ jobs:
       OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
       OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
     steps:
-      # - name: Retrieve the OCID of a named compartment in tenancy
-      #   uses: oracle-actions/run-oci-cli-command@v1.1.1
-      #   id: find-compartment-id
-      #   with:
-      #     command: 'iam compartment list --compartment-id-in-subtree=true --all'
-      #     query: "data[?name=='gferreyr'].id"
-      #     silent: false
+      - name: Retrieve the OCID of a named compartment in tenancy
+        uses: oracle-actions/run-oci-cli-command@v1.1.1
+        id: find-compartment-id
+        with:
+          command: 'iam compartment list --compartment-id-in-subtree=true --all'
+          query: "data[?name=='gferreyr'].id"
+          silent: false
 
       # - name: 'Create Provider'
       #   uses: oracle-actions/run-oci-cli-command@v1.1.1
@@ -44,13 +44,13 @@ jobs:
         uses: oracle-actions/run-oci-cli-command@v1.1.1
         id: create-stack
         with:
-          command: 'resource-manager stack create-from-git-provider --compartment-id "${{ secrets.OCI_COMPARTMENT_OCID }}"
+          command: 'resource-manager stack create-from-git-provider --compartment-id "${{ steps.find-compartment-id.outputs.raw_output }}"
           --config-source-configuration-source-provider-id "ocid1.ormconfigsourceprovider.oc1.iad.amaaaaaawe6j4fqajjvtwhbcryjpvbdkglks4ggkzripamj76ywnouhmiewa"
           --config-source-branch-name main 
           --config-source-repository-url https://github.com/ionut-sturzu/oci_connectivity
           --display-name rmgit 
           --terraform-version "1.0.x" 
-          --variables "{\"compartment_ocid\": \"${{ secrets.OCI_COMPARTMENT_OCID }}\"}"'
+          --variables "{\"compartment_ocid\": \"${{ steps.find-compartment-id.outputs.raw_output }}\"}"'
           silent: false
       - name: List the display name and shape of the instances in my compartment
         run: |
