@@ -25,13 +25,13 @@ jobs:
       OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
       OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
     steps:
-      # - name: Retrieve the OCID of a named compartment in tenancy
-      #   uses: oracle-actions/run-oci-cli-command@v1.1.1
-      #   id: find-compartment-id
-      #   with:
-      #     command: 'iam compartment list --compartment-id-in-subtree=true --all'
-      #     query: "data[?name=='gferreyr'].id"
-      #     silent: false
+      - name: Retrieve the OCID of a named compartment in tenancy
+        uses: oracle-actions/run-oci-cli-command@v1.1.1
+        id: find-compartment-id
+        with:
+          command: 'iam compartment list --compartment-id-in-subtree=true --all'
+          query: "data[?name=='gferreyr'].id"
+          silent: false
 
       # - name: 'Create Provider'
       #   uses: oracle-actions/run-oci-cli-command@v1.1.1
@@ -44,7 +44,7 @@ jobs:
         uses: oracle-actions/run-oci-cli-command@v1.1.1
         id: create-stack
         with:
-          command: 'resource-manager stack create-from-git-provider --compartment-id  ocid1.compartment.oc1..aaaaaaaaw5uvqadwjql5fakqovf6jlc7sb5yvdnvwuxr7xreliqow7lhe7na #TODO REPLACE WITH VARIABLE
+          command: 'resource-manager stack create-from-git-provider --compartment-id "${{ secrets.OCI_COMPARTMENT_OCID }}"
           --config-source-configuration-source-provider-id "ocid1.ormconfigsourceprovider.oc1.iad.amaaaaaawe6j4fqajjvtwhbcryjpvbdkglks4ggkzripamj76ywnouhmiewa" #TODO REPLACE WITH VARIABLE
           --config-source-branch-name main 
           --config-source-repository-url https://github.com/ionut-sturzu/oci_connectivity
