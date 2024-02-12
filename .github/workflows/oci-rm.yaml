@@ -33,12 +33,31 @@ jobs:
           query: "data[?name=='gferreyr'].id"
           silent: false
 
+      - name: Retrieve the display name and shape of the instances in my compartment
+        uses: oracle-actions/run-oci-cli-command@v1.1.1
+        id: find-instances
+        with:
+          command: 'compute instance list --compartment-id ${{ steps.find-compartment-id.outputs.raw_output }}'
+          query: 'data[*].{name: \"display-name\", shape: shape}'
+          silent: false
+
+      - name: 'Create Provider'
+        uses: oracle-actions/run-oci-cli-command@v1.1.1
+        id: create-connection-git
+        with:
+          command: 'resource-manager configuration-source-provider create-github-access-token-provider --access-token ${{secrets.ACCESS_TOKEN_GITHUB}} --api-endpoint https://github.com/ --display-name workflow  --compartment-id ${{ steps.find-compartment-id.outputs.raw_output }}'
+          query: 'data.id'
+          silent: false
+      - name: 'Extract OCID from create-connection-git output'
+        id: extract-ocid
+        run: echo "OCID=$(echo ${{ steps.create-connection-git.outputs.output }} | tr -d '"')" >> $GITHUB_ENV
+
       - name: 'Create Stack'
         uses: oracle-actions/run-oci-cli-command@v1.1.1
         id: create-stack
         with:
           command: 'resource-manager stack create-from-git-provider --compartment-id "${{ steps.find-compartment-id.outputs.raw_output }}"
-          --config-source-configuration-source-provider-id "ocid1.ormconfigsourceprovider.oc1.iad.amaaaaaawe6j4fqajjvtwhbcryjpvbdkglks4ggkzripamj76ywnouhmiewa"
+          --config-source-configuration-source-provider-id ${{ env.OCID }}
           --config-source-branch-name main 
           --config-source-repository-url https://github.com/guidin360/rm-demo
           --display-name rmgit 
@@ -49,16 +68,15 @@ jobs:
       - name: 'Extract OCID from create stack output'
         id: stack-id
         run: echo "STACK_ID=$(echo ${{ steps.create-stack.outputs.output }} | tr -d '"')" >> $GITHUB_ENV
-     
       - name: 'Terraform Apply'
         uses: oracle-actions/run-oci-cli-command@v1.1.1
         id: terraform-apply
         with:
-          command: 'resource-manager job create-apply-job --stack-id ${{ env.STACK_ID }}'
+          command: 'resource-manager job create-apply-job --stack-id ${{ env.STACK_ID }} --execution-plan-strategy AUTO_APPROVED'
           query: 'data.id'
           silent: false
-
-      - name: Display outputs
+      - name: List the display name and shape of the instances in my compartment
         run: |
+          echo ${{ steps.find-instances.outputs.output }} | jq .
+          echo ${{ steps.create-connection-git.outputs.output }} | jq .
           echo ${{ steps.create-stack.outputs.output }} | jq .
-          echo ${{ steps.apply-stack.outputs.output }} | jq .
