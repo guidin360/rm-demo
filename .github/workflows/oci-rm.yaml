@@ -55,7 +55,7 @@ jobs:
         id: terraform-apply
         with:
           command: 'resource-manager job create-apply-job --stack-id ${{ env.STACK_ID }}'
-          querry: 'data.id'
+          query: 'data.id'
           silent: false
 
       - name: Display outputs
