@@ -33,14 +33,6 @@ jobs:
           query: "data[?name=='gferreyr'].id"
           silent: false
 
-      - name: Retrieve the display name and shape of the instances in my compartment
-        uses: oracle-actions/run-oci-cli-command@v1.1.1
-        id: find-instances
-        with:
-          command: 'compute instance list --compartment-id ${{ steps.find-compartment-id.outputs.raw_output }}'
-          query: 'data[*].{name: \"display-name\", shape: shape}'
-          silent: false
-
       - name: 'Create Provider'
         uses: oracle-actions/run-oci-cli-command@v1.1.1
         id: create-connection-git
@@ -79,7 +71,7 @@ jobs:
           query: 'data.id'
           silent: false
 
-      - name: List the display name and shape of the instances in my compartment
+      - name: Outputs
         run: |
           echo ${{ steps.create-connection-git.outputs.output }} | jq .
           echo ${{ steps.create-stack.outputs.output }} | jq .
