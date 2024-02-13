@@ -81,6 +81,5 @@ jobs:
 
       - name: List the display name and shape of the instances in my compartment
         run: |
-          echo ${{ steps.find-instances.outputs.output }} | jq .
           echo ${{ steps.create-connection-git.outputs.output }} | jq .
           echo ${{ steps.create-stack.outputs.output }} | jq .
